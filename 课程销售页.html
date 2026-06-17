@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内容工坊实战课 — 从0到1学会自媒体文案创作</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --c-primary:#4F46E5;--c-primary-hover:#4338CA;--c-primary-light:#EEF2FF;
+  --c-bg:#FAFAFA;--c-surface:#FFFFFF;--c-border:#E5E7EB;
+  --c-text:#111827;--c-text-secondary:#6B7280;--c-text-tertiary:#9CA3AF;
+  --c-success:#10B981;--c-warning:#F59E0B;--c-error:#EF4444;
+  --c-accent:#F59E0B;
+  --radius:8px;--radius-lg:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08);--shadow-lg:0 4px 20px rgba(0,0,0,.1);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--c-bg);color:var(--c-text);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+/* ========== Navigation ========== */
+.nav{position:fixed;top:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--c-border);z-index:100;height:60px}
+.nav .container{display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-brand{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px}
+.nav-brand svg{width:24px;height:24px}
+.nav-cta{background:var(--c-primary);color:#fff;padding:8px 20px;border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;transition:background .2s}
+.nav-cta:hover{background:var(--c-primary-hover);text-decoration:none}
+/* ========== Hero ========== */
+.hero{background:linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 50%,#C7D2FE 100%);padding:120px 0 80px;text-align:center}
+.hero h1{font-size:42px;font-weight:800;line-height:1.2;margin-bottom:16px;letter-spacing:-0.5px}
+.hero h1 span{background:linear-gradient(135deg,#4F46E5,#7C3AED);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:18px;color:var(--c-text-secondary);max-width:600px;margin:0 auto 32px}
+.hero-badges{display:flex;justify-content:center;gap:20px;margin-bottom:32px;flex-wrap:wrap}
+.hero-badge{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--c-text-secondary)}
+.hero-badge svg{width:18px;height:18px}
+.hero-badge svg:first-child{color:var(--c-success)}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;border:none;text-decoration:none;line-height:1.4}
+.btn-primary{background:var(--c-primary);color:#fff;box-shadow:0 4px 12px rgba(79,70,229,.3)}
+.btn-primary:hover{background:var(--c-primary-hover);transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,70,229,.4);text-decoration:none;color:#fff}
+.btn-secondary{background:var(--c-surface);color:var(--c-text);border:1px solid var(--c-border)}
+.btn-secondary:hover{background:var(--c-bg);text-decoration:none;color:var(--c-text)}
+.btn-lg{padding:16px 40px;font-size:18px}
+.hero-price{display:inline-block;background:rgba(255,255,255,.7);padding:12px 24px;border-radius:12px;margin-bottom:32px;font-size:15px;color:var(--c-text-secondary)}
+.hero-price strong{font-size:32px;color:var(--c-primary);font-weight:800}
+.hero-price s{color:var(--c-text-tertiary);margin:0 8px}
+/* ========== Sections ========== */
+.section{padding:80px 0}
+.section-header{text-align:center;margin-bottom:48px}
+.section-header h2{font-size:30px;font-weight:800;margin-bottom:12px}
+.section-header p{font-size:16px;color:var(--c-text-secondary);max-width:500px;margin:0 auto}
+.section-alt{background:var(--c-surface);border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border)}
+/* ========== Pain Points ========== */
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto}
+.pain-card{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius-lg);padding:28px;text-align:center}
+.pain-card .icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.pain-card h3{font-size:16px;font-weight:600;margin-bottom:8px}
+.pain-card p{font-size:14px;color:var(--c-text-secondary);line-height:1.5}
+.pain-card .icon.red{background:#FEF2F2;color:#EF4444}
+.pain-card .icon.orange{background:#FFFBEB;color:#F59E0B}
+.pain-card .icon.blue{background:#EEF2FF;color:#4F46E5}
+/* ========== Course Outline ========== */
+.outline-list{max-width:800px;margin:0 auto}
+.outline-item{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius-lg);padding:24px;margin-bottom:12px;transition:all .2s}
+.outline-item:hover{border-color:var(--c-primary);box-shadow:var(--shadow)}
+.outline-item .num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--c-primary);color:#fff;border-radius:50%;font-size:14px;font-weight:700;flex-shrink:0}
+.outline-item .header{display:flex;align-items:flex-start;gap:14px;margin-bottom:8px}
+.outline-item .header h3{font-size:16px;font-weight:600;margin-top:6px}
+.outline-item .header .tag{margin-left:auto;font-size:12px;background:var(--c-primary-light);color:var(--c-primary);padding:2px 10px;border-radius:12px;font-weight:500;white-space:nowrap;margin-top:8px}
+.outline-item ul{list-style:none;margin-left:46px}
+.outline-item ul li{font-size:14px;color:var(--c-text-secondary);padding:4px 0;display:flex;align-items:center;gap:8px}
+.outline-item ul li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--c-text-tertiary);flex-shrink:0}
+/* ========== Tool Bonus ========== */
+.bonus-card{background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border-radius:var(--radius-lg);padding:40px;display:flex;gap:40px;align-items:center;max-width:900px;margin:0 auto}
+.bonus-card .content{flex:1}
+.bonus-card .content h3{font-size:22px;font-weight:700;margin-bottom:8px}
+.bonus-card .content p{font-size:15px;color:var(--c-text-secondary);margin-bottom:16px;line-height:1.6}
+.bonus-card .content .feature{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:6px}
+.bonus-card .content .feature svg{width:16px;height:16px;color:var(--c-success);flex-shrink:0}
+.bonus-card .visual{width:240px;height:200px;background:var(--c-surface);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px;text-align:center;flex-shrink:0}
+.bonus-card .visual svg{width:48px;height:48px;color:var(--c-primary);margin-bottom:8px}
+.bonus-card .visual strong{font-size:18px;font-weight:700}
+.bonus-card .visual span{font-size:13px;color:var(--c-text-secondary)}
+/* ========== Pricing ========== */
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto}
+.pricing-card{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius-lg);padding:36px;text-align:center;position:relative;transition:all .2s}
+.pricing-card.featured{border-color:var(--c-primary);box-shadow:0 4px 24px rgba(79,70,229,.15);transform:scale(1.02)}
+.pricing-card .badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--c-primary);color:#fff;padding:4px 16px;border-radius:20px;font-size:13px;font-weight:600}
+.pricing-card .plan-name{font-size:18px;font-weight:600;margin-bottom:4px}
+.pricing-card .plan-desc{font-size:14px;color:var(--c-text-secondary);margin-bottom:20px}
+.pricing-card .price{font-size:42px;font-weight:800;color:var(--c-primary);margin-bottom:4px}
+.pricing-card .price-sub{font-size:14px;color:var(--c-text-tertiary);margin-bottom:20px}
+.pricing-card .features{text-align:left;margin-bottom:24px}
+.pricing-card .features li{list-style:none;padding:8px 0;font-size:14px;display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid var(--c-border-light, #F3F4F6)}
+.pricing-card .features li:last-child{border-bottom:none}
+.pricing-card .features li svg{width:16px;height:16px;color:var(--c-success);flex-shrink:0;margin-top:2px}
+.pricing-card .btn{width:100%;justify-content:center}
+/* ========== FAQ ========== */
+.faq-list{max-width:700px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--c-border);padding:20px 0}
+.faq-item:last-child{border-bottom:none}
+.faq-item .q{font-weight:600;font-size:16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.faq-item .q .arrow{transition:transform .2s;font-size:20px;color:var(--c-text-tertiary)}
+.faq-item.open .q .arrow{transform:rotate(180deg)}
+.faq-item .a{max-height:0;overflow:hidden;transition:max-height .3s ease,margin .3s;font-size:15px;color:var(--c-text-secondary);line-height:1.6}
+.faq-item.open .a{max-height:300px;margin-top:12px}
+/* ========== Final CTA ========== */
+.cta-section{background:linear-gradient(135deg,#4F46E5,#7C3AED);padding:80px 0;text-align:center;color:#fff}
+.cta-section h2{font-size:34px;font-weight:800;margin-bottom:12px}
+.cta-section p{font-size:17px;opacity:.9;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+.cta-section .btn-primary{background:#fff;color:var(--c-primary);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.cta-section .btn-primary:hover{background:#F3F4F6;color:var(--c-primary);transform:translateY(-1px)}
+.cta-section .price-tag{font-size:28px;font-weight:700;margin-bottom:8px}
+.cta-section .price-tag s{opacity:.6;font-weight:400;font-size:20px}
+/* ========== Footer ========== */
+.footer{text-align:center;padding:32px 0;font-size:14px;color:var(--c-text-tertiary);border-top:1px solid var(--c-border)}
+/* ========== Instructor ========== */
+.instructor-box{display:flex;gap:32px;align-items:center;max-width:700px;margin:0 auto;background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius-lg);padding:32px}
+.instructor-box .avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#C7D2FE);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:40px;font-weight:700;color:var(--c-primary)}
+.instructor-box .info h3{font-size:18px;font-weight:600;margin-bottom:4px}
+.instructor-box .info .title{font-size:14px;color:var(--c-text-secondary);margin-bottom:8px}
+.instructor-box .info p{font-size:14px;color:var(--c-text-secondary);line-height:1.6}
+/* ========== Why Section ========== */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto}
+.why-card{text-align:center;padding:24px}
+.why-card .num{font-size:36px;font-weight:800;color:var(--c-primary);margin-bottom:4px}
+.why-card h4{font-size:15px;font-weight:600;margin-bottom:6px}
+.why-card p{font-size:13px;color:var(--c-text-secondary)}
+/* ========== Responsive ========== */
+@media(max-width:768px){
+  .hero h1{font-size:28px}
+  .hero{padding:100px 0 60px}
+  .hero p{font-size:16px}
+  .pain-grid,.why-grid{grid-template-columns:1fr}
+  .bonus-card{flex-direction:column;padding:24px}
+  .bonus-card .visual{width:100%;height:auto;padding:20px}
+  .pricing-grid{grid-template-columns:1fr}
+  .pricing-card.featured{transform:none}
+  .instructor-box{flex-direction:column;text-align:center;padding:24px}
+  .section{padding:48px 0}
+  .section-header h2{font-size:24px}
+  .hero-price strong{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="container">
+    <div class="nav-brand">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" fill="#4F46E5"/><path d="M7 12l4 4 6-6" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      内容工坊
+    </div>
+    <a class="nav-cta" href="#pricing">立即报名</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-price">
+      💰 限时优惠 <strong>199</strong> 元 <s>原价 499</s>
+    </div>
+    <h1>从0到1<br><span>学会自媒体文案创作</span></h1>
+    <p>7 节实战课 + 专业文案工具，带你掌握标题优化、文案结构、电商转化、广告法避坑的完整技能</p>
+    <div class="hero-badges">
+      <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>7 节录播课</span>
+      <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>含工具永久使用权</span>
+      <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>实操案例 + 模板</span>
+      <span class="hero-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>永久回看</span>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-primary btn-lg" href="#pricing">立即报名 — 199 元</a>
+      <a class="btn btn-secondary btn-lg" href="#outline">查看课程大纲</a>
+    </div>
+  </div>
+</section>
+
+<!-- Pain Points -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>你是不是也遇到这些问题？</h2>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="icon red">😰</div>
+        <h3>写标题全靠蒙</h3>
+        <p>标题写出来没人看，不知道什么样的标题能吸引点击，数据全凭运气</p>
+      </div>
+      <div class="pain-card">
+        <div class="icon orange">😫</div>
+        <h3>文案结构混乱</h3>
+        <p>写出来的文章没有人愿意看完，开头不吸引人，正文没逻辑，结尾没号召</p>
+      </div>
+      <div class="pain-card">
+        <div class="icon blue">😤</div>
+        <h3>一不小心就违规</h3>
+        <p>用了"最""第一"被投诉，广告法违禁词防不胜防，被罚款才知道错了</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="num">80%</div>
+        <h4>标题决定点击率</h4>
+        <p>好的标题能让阅读量提升 3-5 倍，这是文案创作最核心的技能</p>
+      </div>
+      <div class="why-card">
+        <div class="num">90%</div>
+        <h4>用户只看开头</h4>
+        <p>开头 3 秒决定读者是否继续，学会结构设计是留住用户的关键</p>
+      </div>
+      <div class="why-card">
+        <div class="num">10万+</div>
+        <h4>违规罚款起步价</h4>
+        <p>广告法违规最低罚款 10 万元，学会自查是每个运营的必修课</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Course Outline -->
+<section class="section" id="outline">
+  <div class="container">
+    <div class="section-header">
+      <h2>课程大纲</h2>
+      <p>7 节实战课，从入门到精通</p>
+    </div>
+    <div class="outline-list">
+      <div class="outline-item">
+        <div class="header">
+          <div class="num">1</div>
+          <h3>认识文案 — 好的文案长什么样</h3>
+          <span class="tag">基础</span>
+        </div>
+        <ul>
+          <li>什么是好文案：3 个核心标准</li>
+          <li>不同平台的内容特点（抖音 / 小红书 / 公众号 / 知乎）</li>
+          <li>内容工坊工具快速入门</li>
+          <li>实战：分析 3 个爆款文案，找出共性</li>
+        </ul>
+      </div>
+      <div class="outline-item">
+        <div class="header">
+          <div class="num">2</div>
+          <h3>标题的艺术</h3>
+          <span class="tag">核心</span>
+        </div>
+        <ul>
+          <li>爆款标题的 5 个万能公式</li>
+          <li>数字、问句、情绪词的使用技巧</li>
+          <li>不同平台标题长度与风格适配</li>
+          <li>实操：用标题分析工具优化你的标题，对比前后差异</li>
+        </ul>
+      </div>
+      <div class="outline-item">
+        <div class="header">
+          <div class="num">3</div>
+          <h3>文案结构（上）— 开头与正文</h3>
+          <span class="tag">核心</span>
+        </div>
+        <ul>
+          <li>4 种高打开率的开头写法</li>
+          <li>正文结构：SCQA 模型、金字塔原理</li>
+          <li>过渡与节奏控制</li>
+          <li>实操：用文案诊断工具分析你的文章可读性</li>
+        </ul>
+      </div>
+      <div class="outline-item">
+        <div class="header">
+          <div class="num">4</div>
+          <h3>文案结构（下）— 结尾与转化</h3>
+          <span class="tag">核心</span>
+        </div>
+        <ul>
+          <li>强有力的结尾：3 种收尾方式</li>
+          <li>行动号召（CTA）的设计原则</li>
+          <li>用关键词密度检查优化 SEO</li>
+          <li>实操：完整写一篇文案并跑一遍诊断工具</li>
+        </ul>
+      </div>
+      <div class="outline-item">
+        <div class="header">
+          <div class="num">5</div>
+          <h3>电商文案特训</h3>
+          <span class="tag">进阶</span>
+        </div>
+        <ul>
+          <li>详情页文案的 FAB 法则</li>
+          <li>促销文案的紧迫感营造</li>
+          <li>AIDA 模型的实战应用</li>
+          <li>实操：用模板库快速生成不同场景的电商文案</li>
+        </ul>
+      </div>
+      <div class="outline-item">
+        <div class="header">
+          <div class="num">6</div>
+          <h3>广告法避坑指南</h3>
+          <span class="tag">必备</span>
+        </div>
+        <ul>
+          <li>广告法违禁词清单（极限词、夸大宣传、虚假承诺）</li>
+          <li>如何安全表达："最"的替代方案</li>
+          <li>同行违规案例分析</li>
+          <li>实操：用敏感词检测工具过一遍你的历史文案</li>
+        </ul>
+      </div>
+      <div class="outline-item">
+        <div class="header">
+          <div class="num">7</div>
+          <h3>建立你的内容工作流</h3>
+          <span class="tag">综合</span>
+        </div>
+        <ul>
+          <li>从选题到发布的完整流程设计</li>
+          <li>用工具矩阵提高效率（标题→写作→诊断→检测）</li>
+          <li>如何持续优化你的内容质量</li>
+          <li>结业项目：用整套流程完成一篇完整文案</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tool Bonus -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2>报名即送专业工具</h2>
+      <p>买课送工具，边学边练</p>
+    </div>
+    <div class="bonus-card">
+      <div class="content">
+        <h3>内容工坊 · 永久使用权</h3>
+        <p>市场上类似工具月费 30-50 元，买课后永久免费使用，含后续所有更新</p>
+        <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>智能标题分析 · 评分 + 优化建议 + 平台适配</div>
+        <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>文案诊断 · 可读性评分 + 结构分析 + 关键词密度</div>
+        <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>敏感词检测 · 广告法违禁词一键扫描</div>
+        <div class="feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>20 个专业文案模板 · 覆盖 7 大场景</div>
+      </div>
+      <div class="visual">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <strong>价值 199 元</strong>
+        <span>工具永久使用权<br>买课 = 免费送</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Instructor -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>关于讲师</h2>
+    </div>
+    <div class="instructor-box">
+      <div class="avatar">我</div>
+      <div class="info">
+        <h3>内容工坊 创始人</h3>
+        <div class="title">专注内容创作与运营工具开发</div>
+        <p>从 0 到 1 搭建了「内容工坊」创作平台，帮助超过 1000 名内容创作者提升文案质量。深度研究各平台内容算法和文案规律，总结出一套可复用的实战方法。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section section-alt" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <h2>选择适合你的方案</h2>
+      <p>限时优惠，随时恢复原价</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">基础版</div>
+        <div class="plan-desc">适合只想自学的学员</div>
+        <div class="price">199</div>
+        <div class="price-sub">元 · 一次付费，永久有效</div>
+        <ul class="features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>7 节录播课程，永久回看</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>全部课件 + 案例素材下载</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>内容工坊工具永久使用权</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>社群交流答疑</li>
+        </ul>
+        <a class="btn btn-primary" href="#">立即报名 — 199 元</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="badge">🔥 推荐</div>
+        <div class="plan-name">实战版</div>
+        <div class="plan-desc">适合想快速上手出成果的学员</div>
+        <div class="price">399</div>
+        <div class="price-sub">元 · 一次付费，永久有效</div>
+        <ul class="features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>基础版全部权益</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>3 次 1对1 作业批改</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>10 篇文案诊断报告（工具分析 + 人工解读）</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>专属微信答疑群</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>后续课程更新免费获取</li>
+        </ul>
+        <a class="btn btn-primary" href="#">立即报名 — 399 元</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-header">
+      <h2>常见问题</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="q" onclick="toggleFaq(this)">课程适合零基础吗？<span class="arrow">▾</span></div>
+        <div class="a">完全适合。课程从最基础的概念讲起，每节课配有实操练习，零基础也能跟上。已经有基础的学员可以直接看第 2-5 课的核心内容。</div>
+      </div>
+      <div class="faq-item">
+        <div class="q" onclick="toggleFaq(this)">课程是直播还是录播？<span class="arrow">▾</span></div>
+        <div class="a">全部是录播课程，购买后可以永久回看，随时随地学习，不限次数。</div>
+      </div>
+      <div class="faq-item">
+        <div class="q" onclick="toggleFaq(this)">工具需要另外付费吗？<span class="arrow">▾</span></div>
+        <div class="a">不需要。内容工坊工具是课程配套赠品，购买课程即可永久免费使用，后续功能更新也免费。</div>
+      </div>
+      <div class="faq-item">
+        <div class="q" onclick="toggleFaq(this)">课程学完能达到什么水平？<span class="arrow">▾</span></div>
+        <div class="a">认真完成所有课程和练习后，你能独立完成各平台文案的创作和优化，具备系统化的内容思维能力，不再靠感觉写文案。</div>
+      </div>
+      <div class="faq-item">
+        <div class="q" onclick="toggleFaq(this)">支持退款吗？<span class="arrow">▾</span></div>
+        <div class="a">购买后 7 天内，如果课程内容不满意（学习进度不超过 2 节课），可全额退款。</div>
+      </div>
+      <div class="faq-item">
+        <div class="q" onclick="toggleFaq(this)">购买后怎么上课？<span class="arrow">▾</span></div>
+        <div class="a">购买后添加客服微信，发送购买截图，拉你进学员群并开通课程权限。课程在小鹅通/知识星球平台观看。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>现在就加入，学会文案创作</h2>
+    <p>7 节课 + 专业工具，让你从无从下手到写出让人愿意看、愿意买的文案</p>
+    <div class="price-tag"><s>原价 499</s> 限时仅需 199 元</div>
+    <a class="btn btn-primary btn-lg" href="#">立即报名 →</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    内容工坊 · 版权所有
+  </div>
+</footer>
+
+<script>
+// FAQ toggle
+function toggleFaq(el){
+  var item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var target = document.querySelector(this.getAttribute('href'));
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内容工坊 - 专业内容创作与优化平台</title>
+<style>
+/* ========== Reset & Variables ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --c-primary:#4F46E5;--c-primary-hover:#4338CA;--c-primary-light:#EEF2FF;
+  --c-bg:#F3F4F6;--c-surface:#FFFFFF;--c-border:#E5E7EB;--c-border-light:#F3F4F6;
+  --c-text:#111827;--c-text-secondary:#6B7280;--c-text-tertiary:#9CA3AF;
+  --c-success:#10B981;--c-success-bg:#ECFDF5;--c-warning:#F59E0B;--c-warning-bg:#FFFBEB;
+  --c-error:#EF4444;--c-error-bg:#FEF2F2;
+  --radius:8px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 12px rgba(0,0,0,.1);
+  --sidebar-w:240px;--header-h:56px;--transition:.2s ease;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+html,body{height:100%;background:var(--c-bg);color:var(--c-text);font-size:14px;line-height:1.5}
+a{color:var(--c-primary);text-decoration:none}
+a:hover{text-decoration:underline}
+/* ========== Layout ========== */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--sidebar-w);background:var(--c-surface);border-right:1px solid var(--c-border);
+  display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--c-border);height:var(--header-h);flex-shrink:0}
+.sidebar-brand svg{width:28px;height:28px}
+.sidebar-brand h1{font-size:16px;font-weight:700;white-space:nowrap}
+.sidebar-brand span{font-size:11px;color:var(--c-text-secondary);font-weight:400}
+.sidebar-nav{flex:1;padding:12px 8px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer;
+  color:var(--c-text-secondary);transition:all var(--transition);border:none;background:none;width:100%;font-size:14px;text-align:left}
+.nav-item:hover{background:var(--c-primary-light);color:var(--c-primary)}
+.nav-item.active{background:var(--c-primary-light);color:var(--c-primary);font-weight:600}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.nav-item .badge{margin-left:auto;background:var(--c-primary-light);color:var(--c-primary);font-size:11px;padding:1px 7px;border-radius:10px;font-weight:500}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.header{height:var(--header-h);background:var(--c-surface);border-bottom:1px solid var(--c-border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
+.header-title{font-size:16px;font-weight:600}
+.header-actions{display:flex;align-items:center;gap:12px}
+.header-actions .btn{font-size:13px}
+.content{flex:1;overflow-y:auto;padding:24px}
+/* ========== Buttons ========== */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:14px;
+  font-weight:500;cursor:pointer;transition:all var(--transition);border:1px solid transparent;line-height:1.4}
+.btn-primary{background:var(--c-primary);color:#fff}
+.btn-primary:hover{background:var(--c-primary-hover)}
+.btn-secondary{background:var(--c-surface);border-color:var(--c-border);color:var(--c-text)}
+.btn-secondary:hover{background:var(--c-bg)}
+.btn-ghost{background:transparent;color:var(--c-text-secondary)}
+.btn-ghost:hover{background:var(--c-bg);color:var(--c-text)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn svg{width:16px;height:16px}
+/* ========== Cards ========== */
+.card{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--c-border-light)}
+.card-header h2{font-size:15px;font-weight:600}
+.card-header h3{font-size:14px;font-weight:600}
+/* ========== Forms ========== */
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:500;margin-bottom:6px;color:var(--c-text-secondary)}
+textarea,.input{width:100%;padding:10px 12px;border:1px solid var(--c-border);border-radius:6px;font-size:14px;
+  font-family:inherit;transition:border-color var(--transition);background:var(--c-surface);color:var(--c-text);resize:vertical}
+textarea:focus,.input:focus{outline:none;border-color:var(--c-primary);box-shadow:0 0 0 3px var(--c-primary-light)}
+textarea{min-height:120px}
+textarea.large{min-height:250px}
+.input-group{display:flex;gap:8px}
+.input-group .input{flex:1}
+/* ========== Stats / Metrics ========== */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.stat-card{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--radius);padding:16px;text-align:center}
+.stat-card .value{font-size:28px;font-weight:700;line-height:1.2}
+.stat-card .label{font-size:12px;color:var(--c-text-secondary);margin-top:4px}
+.stat-card .value.success{color:var(--c-success)}
+.stat-card .value.warning{color:var(--c-warning)}
+.stat-card .value.error{color:var(--c-error)}
+.stat-card .value.primary{color:var(--c-primary)}
+.stat-card .sub{font-size:12px;color:var(--c-text-tertiary);margin-top:2px}
+/* ========== Score display ========== */
+.score-ring{display:flex;flex-direction:column;align-items:center;gap:8px}
+.score-ring .ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:700;position:relative}
+.score-ring .ring.excellent{border:4px solid var(--c-success);color:var(--c-success)}
+.score-ring .ring.good{border:4px solid var(--c-primary);color:var(--c-primary)}
+.score-ring .ring.average{border:4px solid var(--c-warning);color:var(--c-warning)}
+.score-ring .ring.poor{border:4px solid var(--c-error);color:var(--c-error)}
+/* ========== Suggestions ========== */
+.suggestion{padding:12px;border-radius:6px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
+.suggestion svg{width:16px;height:16px;flex-shrink:0;margin-top:2px}
+.suggestion.positive{background:var(--c-success-bg)}
+.suggestion.positive svg{color:var(--c-success)}
+.suggestion.warning{background:var(--c-warning-bg)}
+.suggestion.warning svg{color:var(--c-warning)}
+.suggestion.error{background:var(--c-error-bg)}
+.suggestion.error svg{color:var(--c-error)}
+.suggestion .text{font-size:13px}
+.suggestion .text strong{display:block;margin-bottom:2px}
+/* ========== Keyword tags ========== */
+.keyword-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.keyword-tag{background:var(--c-primary-light);color:var(--c-primary);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:500}
+.keyword-tag .count{background:var(--c-primary);color:#fff;border-radius:8px;padding:0 5px;margin-left:4px;font-size:11px}
+/* ========== Templates ========== */
+.template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.template-card{border:1px solid var(--c-border);border-radius:var(--radius);padding:16px;cursor:pointer;
+  transition:all var(--transition);background:var(--c-surface)}
+.template-card:hover{border-color:var(--c-primary);box-shadow:var(--shadow)}
+.template-card .category{font-size:11px;color:var(--c-text-tertiary);font-weight:500;text-transform:uppercase;margin-bottom:4px}
+.template-card h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.template-card p{font-size:13px;color:var(--c-text-secondary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.template-card .tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.template-card .tags span{font-size:11px;background:var(--c-bg);padding:2px 6px;border-radius:4px;color:var(--c-text-secondary)}
+/* ========== Progress ========== */
+.progress-bar{height:6px;background:var(--c-border-light);border-radius:3px;overflow:hidden;margin-top:8px}
+.progress-bar .fill{height:100%;border-radius:3px;transition:width .5s ease}
+.progress-bar .fill.good{background:var(--c-success)}
+.progress-bar .fill.average{background:var(--c-warning)}
+.progress-bar .fill.poor{background:var(--c-error)}
+.progress-bar .fill.primary{background:var(--c-primary)}
+/* ========== Tabs ========== */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--c-border);margin-bottom:16px}
+.tab{padding:10px 16px;cursor:pointer;border:none;background:none;font-size:14px;color:var(--c-text-secondary);
+  border-bottom:2px solid transparent;transition:all var(--transition);font-weight:500}
+.tab:hover{color:var(--c-text)}
+.tab.active{color:var(--c-primary);border-bottom-color:var(--c-primary)}
+/* ========== Modal ========== */
+.template-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.template-detail-modal{background:var(--c-surface);border-radius:var(--radius);max-width:600px;width:100%;max-height:80vh;overflow-y:auto;padding:24px;box-shadow:var(--shadow-lg)}
+.template-detail-modal h3{font-size:16px;font-weight:600;margin-bottom:12px}
+.template-detail-modal .preview{background:var(--c-bg);padding:16px;border-radius:6px;white-space:pre-wrap;font-size:13px;line-height:1.7;margin-bottom:16px}
+.template-detail-modal .actions{display:flex;gap:8px;justify-content:flex-end}
+/* ========== Empty state ========== */
+.empty-state{text-align:center;padding:40px 20px;color:var(--c-text-secondary)}
+.empty-state svg{width:48px;height:48px;margin-bottom:12px;opacity:.4}
+.empty-state p{font-size:14px}
+/* ========== Page header ========== */
+.page-header{margin-bottom:20px}
+.page-header h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.page-header p{font-size:14px;color:var(--c-text-secondary)}
+/* ========== Platform badges ========== */
+.platform-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:3px 8px;border-radius:4px;font-weight:500}
+.platform-badge.douyin{background:#1e1e1e10;color:#1e1e1e}
+.platform-badge.xiaohongshu{background:#FF244210;color:#FF2442}
+.platform-badge.weixin{background:#07C16010;color:#07C160}
+.platform-badge.weibo{background:#FF820010;color:#FF8200}
+.platform-badge.bilibili{background:#FB729910;color:#FB7299}
+.platform-badge.zhihu{background:#0066FF10;color:#0066FF}
+/* ========== Toolbar ========== */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar .btn-group{display:flex;border:1px solid var(--c-border);border-radius:6px;overflow:hidden}
+.toolbar .btn-group .btn{border-radius:0;border:none;border-right:1px solid var(--c-border);padding:6px 12px;font-size:13px}
+.toolbar .btn-group .btn:last-child{border-right:none}
+.toolbar .btn-group .btn.active{background:var(--c-primary-light);color:var(--c-primary)}
+/* ========== Result area ========== */
+.result-area{margin-top:16px;padding-top:16px;border-top:1px solid var(--c-border-light)}
+.result-area h3{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.result-area h3 .count{font-size:12px;color:var(--c-text-secondary);font-weight:400}
+/* ========== Detail row ========== */
+.detail-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--c-border-light)}
+.detail-row:last-child{border-bottom:none}
+.detail-row .key{color:var(--c-text-secondary)}
+.detail-row .value{font-weight:500}
+/* ========== Responsive ========== */
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-240px;top:0;bottom:0;z-index:50;box-shadow:var(--shadow-lg);transition:left var(--transition)}
+  .sidebar.open{left:0}
+  .sidebar-backdrop{display:none}
+  .sidebar.open~.sidebar-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:49}
+  .content{padding:16px}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .template-grid{grid-template-columns:1fr}
+  .header{padding:0 16px}
+  .mobile-menu-btn{display:flex!important}
+  .mobile-bottom-nav{display:flex}
+  .main{padding-bottom:60px}
+}
+.mobile-menu-btn{display:none}
+/* ========== Animations ========== */
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* ========== Mobile bottom nav ========== */
+.mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--c-surface);border-top:1px solid var(--c-border);
+  z-index:40;padding:4px 0;justify-content:space-around}
+.mobile-bottom-nav .nav-item{flex-direction:column;gap:2px;padding:6px 4px;font-size:10px;width:auto}
+.mobile-bottom-nav .nav-item svg{width:20px;height:20px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <svg viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="24" height="24" rx="6" fill="#4F46E5"/><path d="M8 14l4 4 8-8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><h1>内容工坊</h1><span>Content Studio</span></div>
+    </div>
+    <nav class="sidebar-nav" id="nav">
+      <button class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        工作台
+      </button>
+      <button class="nav-item" data-page="title-analyzer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        标题分析
+      </button>
+      <button class="nav-item" data-page="copy-diagnosis">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        文案诊断
+      </button>
+      <button class="nav-item" data-page="word-counter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        字数统计
+      </button>
+      <button class="nav-item" data-page="sensitive-words">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        敏感词检测
+      </button>
+      <button class="nav-item" data-page="templates">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        文案模板
+      </button>
+    </nav>
+  </aside>
+  <!-- Backdrop for mobile -->
+  <div class="sidebar-backdrop" id="backdrop"></div>
+  <!-- Main -->
+  <div class="main">
+    <header class="header">
+      <button class="btn btn-ghost mobile-menu-btn" id="menuBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="header-title" id="pageTitle">工作台</span>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="handleExport()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          导出报告
+        </button>
+      </div>
+    </header>
+    <div class="content" id="pageContent">
+      <!-- Dynamic content rendered here -->
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== App State ==========
+let currentPage = 'dashboard';
+let analysisResults = {};
+
+// ========== Navigation ==========
+const pageTitles = {
+  dashboard:'工作台', 'title-analyzer':'标题分析', 'copy-diagnosis':'文案诊断',
+  'word-counter':'字数统计', 'sensitive-words':'敏感词检测', 'templates':'文案模板'
+};
+
+document.querySelectorAll('.nav-item').forEach(el=>{
+  el.addEventListener('click',()=>{
+    const page = el.dataset.page;
+    navigateTo(page);
+    document.getElementById('sidebar').classList.remove('open');
+  });
+});
+
+document.getElementById('menuBtn').addEventListener('click',()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+document.getElementById('backdrop').addEventListener('click',()=>{
+  document.getElementById('sidebar').classList.remove('open');
+});
+
+function navigateTo(page){
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
+  document.getElementById('pageTitle').textContent = pageTitles[page]||page;
+  renderPage(page);
+}
+
+// ========== Render Engine ==========
+function renderPage(page){
+  const container = document.getElementById('pageContent');
+  switch(page){
+    case 'dashboard': renderDashboard(container); break;
+    case 'title-analyzer': renderTitleAnalyzer(container); break;
+    case 'copy-diagnosis': renderCopyDiagnosis(container); break;
+    case 'word-counter': renderWordCounter(container); break;
+    case 'sensitive-words': renderSensitiveWords(container); break;
+    case 'templates': renderTemplates(container); break;
+  }
+}
+
+// ========== SVG Icon Helper ==========
+function icon(name){
+  const icons={
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
+    star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  };
+  return icons[name]||icons.info;
+}
+
+// ========== Text Analysis Utilities ==========
+function countChineseChars(text){
+  return (text.match(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/g)||[]).length;
+}
+function countWords(text){
+  const chineseChars = countChineseChars(text);
+  const cleaned = text.replace(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/g,' ');
+  const englishWords = cleaned.split(/[\s,;:.!?()（）【】""''、，。；：！？…—·]+/).filter(w=>w.length>0).length;
+  const totalChars = text.replace(/\s/g,'').length;
+  return {chineseChars,englishWords,totalChars,totalWithSpace:text.length};
+}
+function countSentences(text){
+  return (text.split(/[。！？\n]+/).filter(s=>s.trim().length>0).length)||1;
+}
+function countParagraphs(text){
+  return text.split(/\n+/).filter(p=>p.trim().length>0).length||1;
+}
+function getKeywordDensity(text,keywords){
+  if(!keywords||!keywords.length) return [];
+  const total = countChineseChars(text)||1;
+  return keywords.map(kw=>{
+    const regex = new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');
+    const count = (text.match(regex)||[]).length;
+    return {keyword:kw,count,density:((count/total)*100).toFixed(1)};
+  });
+}
+function analyzeReadability(text){
+  const chars = countChineseChars(text);
+  const sents = countSentences(text);
+  const paras = countParagraphs(text);
+  const avgSentLen = sents>0?chars/sents:0;
+  const longSents = (text.match(/[^。！？\n]{50,}[。！？]/g)||[]).length;
+  const shortSents = (text.match(/[^。！？\n]{1,20}[。！？]/g)||[]).length;
+  let score = 60;
+  if(avgSentLen>=15&&avgSentLen<=30) score+=20;
+  else if(avgSentLen>=10&&avgSentLen<=40) score+=10;
+  if(longSents<=sents*0.3) score+=10;
+  if(paras>=3) score+=10;
+  score = Math.min(100,Math.max(0,score));
+  return {chars,sents,paras,avgSentLen:Math.round(avgSentLen*10)/10,longSents,shortSents,score};
+}
+
+// ========== Sensitive Words ==========
+const sensitiveWordDB = [
+  '第一','最好','第一品牌','顶级','极品','第一人','NO.1','唯一','全能','100%','百分之百',
+  '绝无仅有','史无前例','万能','完美','零风险','100%有效','绝对安全','全网第一','销量第一',
+  '排名第一','极致','最','首个','首选','冠军','国家级','最高级','最佳','王牌','独家',
+  '全国第一','销量冠军','领导者','领先','巅峰','之王','至尊','绝佳','超级','国家级产品',
+  '包治百病','根治','彻底治愈','永不复发','无效退款','一用就灵','神效','奇效','特效',
+  '立马见效','三天见效','一次见效','保证有效','绝对有效','百分百有效'
+];
+
+function checkSensitiveWords(text){
+  const results = [];
+  sensitiveWordDB.forEach(word=>{
+    const regex = new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');
+    let match;
+    while((match=regex.exec(text))!==null){
+      results.push({word,index:match.index,context:text.substring(Math.max(0,match.index-8),match.index+word.length+8)});
+    }
+  });
+  return results;
+}
+
+// ========== Title Analysis ==========
+function analyzeTitle(title){
+  const len = title.length;
+  const chars = countChineseChars(title);
+  const hasNumbers = /\d/.test(title);
+  const hasQuestion = /[？?]/.test(title);
+  const hasExclamation = /[！!]/.test(title);
+  const hasQuotes = /[""''「」『』]/.test(title);
+  const hasEmoji = /\\p{Emoji}/u.test(title);
+  let score = 40;
+  const suggestions = [];
+  if(len>=10&&len<=30){score+=15;suggestions.push({type:'positive',msg:'标题长度适中（10-30字），有利于展示和阅读'});}
+  else if(len<10){score+=5;suggestions.push({type:'warning',msg:'标题偏短（少于10字），建议增加更多信息以吸引点击'});}
+  else{suggestions.push({type:'warning',msg:'标题偏长（超过30字），可能被截断，建议精简'});}
+  if(hasNumbers){score+=10;suggestions.push({type:'positive',msg:'包含数字，能增加标题的具体感和可信度'});}
+  else{suggestions.push({type:'warning',msg:'建议加入数字，如「3个方法」「5大技巧」，能提升点击率'});}
+  if(hasQuestion){score+=10;suggestions.push({type:'positive',msg:'使用问句形式，能激发读者的好奇心和共鸣'});}
+  if(hasExclamation){score+=5;suggestions.push({type:'warning',msg:'使用感叹号可增强情绪，但注意不要过度'});}
+  if(hasQuotes){score+=5;suggestions.push({type:'positive',msg:'使用引号突出重点，引导读者注意力'});}
+  if(hasEmoji){score+=5;suggestions.push({type:'positive',msg:'使用表情符号增加视觉吸引力，尤其在社交媒体平台效果更佳'});}
+  if(chars/len>0.6) score+=5;
+  const powerWords = ['如何','为什么','怎么样','秘诀','技巧','指南','教程','攻略','推荐','清单','合集','对比','实测','亲测','避坑','种草','干货','必看','绝了','YYDS','封神'];
+  const foundPower = powerWords.filter(w=>title.includes(w));
+  if(foundPower.length>0){
+    score+=10;suggestions.push({type:'positive',msg:'使用了效果词「'+foundPower.join('、')+'」，能有效提升吸引力'});
+  }
+  score = Math.min(100,Math.max(0,score));
+  let level = 'poor';
+  if(score>=80) level='excellent';
+  else if(score>=65) level='good';
+  else if(score>=50) level='average';
+  return {score,level,suggestions,len,chars,hasNumbers,hasQuestion,hasExclamation,hasQuotes,hasEmoji,foundPower};
+}
+
+// ========== Platform Suggestions ==========
+function getPlatformAdvice(title){
+  const len = title.length;
+  return [
+    {name:'抖音',class:'douyin',ideal:'15-25字',ok:len>=12&&len<=25,
+     advice:len>25?'标题偏长，抖音推荐15-25字的标题效果最佳':len<12?'标题偏短，建议增加到15字以上':''},
+    {name:'小红书',class:'xiaohongshu',ideal:'12-20字',ok:len>=10&&len<=20,
+     advice:len>20?'标题偏长，小红书推荐12-20字效果最佳':len<10?'标题偏短，建议增加到12字以上':''},
+    {name:'微信公众号',class:'weixin',ideal:'15-25字',ok:len>=12&&len<=25,
+     advice:len>25?'标题偏长，公众号推荐15-25字':len<12?'标题偏短，建议增加到15字以上':''},
+    {name:'微博',class:'weibo',ideal:'15-30字',ok:len>=12&&len<=30,
+     advice:len>30?'标题偏长，微博推荐15-30字':len<12?'标题偏短，建议增加到15字以上':''},
+    {name:'B站',class:'bilibili',ideal:'15-25字',ok:len>=12&&len<=25,
+     advice:len>25?'标题偏长，B站推荐15-25字':len<12?'标题偏短，建议增加到15字以上':''},
+    {name:'知乎',class:'zhihu',ideal:'20-40字',ok:len>=15&&len<=40,
+     advice:len>40?'标题偏长，知乎推荐20-40字':len<15?'标题偏短，知乎标题可适当增加到20字以上':''}
+  ];
+}
+
+// ========== Templates Data ==========
+const templateDB = [
+  {id:1,category:'电商标题',title:'痛点+解决方案型',preview:'还在为[痛点]烦恼？试试[产品]，[核心卖点]，[效果承诺]！',tags:['电商','标题','高转化']},
+  {id:2,category:'电商标题',title:'数字+利益型',preview:'[数字]个[品类]选购技巧，第[数字]个90%的人都不知道',tags:['电商','标题','收藏率']},
+  {id:3,category:'电商标题',title:'对比型',preview:'别再用[旧产品]了！[新品]比它好[数字]倍，价格还便宜[金额]',tags:['电商','对比','引流']},
+  {id:4,category:'小红书笔记',title:'合集推荐型',preview:'私藏[品类]合集｜这[数字]个宝藏我不允许你不知道',tags:['小红书','合集','种草']},
+  {id:5,category:'小红书笔记',title:'经验分享型',preview:'做了[数字]年[领域]，这些[品类]我劝你别买💰纯干货',tags:['小红书','避坑','干货']},
+  {id:6,category:'小红书笔记',title:'开箱测评型',preview:'全网最真实[产品]测评｜[数字]天使用体验，优缺点全说',tags:['小红书','测评','真实']},
+  {id:7,category:'公众号文章',title:'干货教程型',preview:'[主题]全攻略：从入门到精通，一篇搞定[目标]',tags:['公众号','教程','干货']},
+  {id:8,category:'公众号文章',title:'热点+观点型',preview:'[热点事件]背后，藏着一个[领域]的[新趋势/真相]',tags:['公众号','热点','观点']},
+  {id:9,category:'公众号文章',title:'故事叙述型',preview:'我从[起点]到[终点]只用了[时间]，只因做对了这[数字]件事',tags:['公众号','故事','经验']},
+  {id:10,category:'抖音短视频',title:'悬念引导型',preview:'[数字]秒带你了解[主题]！最后一个你绝对没想到🔥',tags:['抖音','引流','热门']},
+  {id:11,category:'抖音短视频',title:'教程演示型',preview:'别再[错误做法]了！教你[正确方法]，[效果承诺]💪',tags:['抖音','教程','实用']},
+  {id:12,category:'抖音短视频',title:'反差对比型',preview:'这就是[便宜版]vs[贵价版]的区别，差距也太大了吧😱',tags:['抖音','对比','反差']},
+  {id:13,category:'知乎回答',title:'专业分析型',preview:'关于[问题]，我研究了[数字]份资料，得出[数字]个关键结论',tags:['知乎','专业','深度']},
+  {id:14,category:'知乎回答',title:'亲身经历型',preview:'[领域]从业[数字]年，说点大实话：[核心观点]',tags:['知乎','经历','诚信']},
+  {id:15,category:'知乎回答',title:'清单汇总型',preview:'[主题]必备清单：[数字]个[物品/方法]亲测有效，建议收藏',tags:['知乎','清单','收藏']},
+  {id:16,category:'营销文案',title:'AIDA模型',preview:'Attention: [吸引注意]\\nInterest: [激发兴趣]\\nDesire: [唤起渴望]\\nAction: [行动号召]',tags:['营销','框架','转化']},
+  {id:17,category:'营销文案',title:'FAB法则',preview:'Feature: [产品特征]\\nAdvantage: [相比优势]\\nBenefit: [用户利益]',tags:['营销','电商','转化']},
+  {id:18,category:'营销文案',title:'痛点营销型',preview:'你是否有过这样的经历？[描绘痛点场景]\\n其实，你只需要[解决方案]\\n[产品/服务]帮你[具体好处]',tags:['营销','痛点','转化']},
+  {id:19,category:'品牌文案',title:'品牌故事型',preview:'[品牌名]诞生于[时间/地点]\\n因为[创始初心]\\n我们相信[品牌理念]\\n所以[产品/服务]',tags:['品牌','故事','调性']},
+  {id:20,category:'品牌文案',title:'Slogan型',preview:'[品牌名]，[核心价值]的[品类]\\n——[一句承诺/态度]',tags:['品牌','slogan','传播']},
+];
+
+// ========== Page: Dashboard ==========
+function renderDashboard(el){
+  const hasData = analysisResults.titleAnalysis||analysisResults.diagnosis;
+  el.innerHTML='<div class="page-header"><h2>工作台</h2><p>一站式内容创作与优化工具</p></div>'+
+    '<div class="stat-grid">'+
+      '<div class="stat-card" onclick="navigateTo(\'title-analyzer\')" style="cursor:pointer">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;margin-bottom:8px;color:var(--c-primary)"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'+
+        '<div style="font-size:14px;font-weight:600">智能标题分析</div>'+
+        '<div style="font-size:12px;color:var(--c-text-secondary)">评分·优化建议·平台适配</div>'+
+      '</div>'+
+      '<div class="stat-card" onclick="navigateTo(\'copy-diagnosis\')" style="cursor:pointer">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;margin-bottom:8px;color:var(--c-success)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'+
+        '<div style="font-size:14px;font-weight:600">文案诊断</div>'+
+        '<div style="font-size:12px;color:var(--c-text-secondary)">可读性·关键词·结构分析</div>'+
+      '</div>'+
+      '<div class="stat-card" onclick="navigateTo(\'word-counter\')" style="cursor:pointer">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;margin-bottom:8px;color:var(--c-warning)"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>'+
+        '<div style="font-size:14px;font-weight:600">字数统计</div>'+
+        '<div style="font-size:12px;color:var(--c-text-secondary)">多维度文本统计</div>'+
+      '</div>'+
+      '<div class="stat-card" onclick="navigateTo(\'sensitive-words\')" style="cursor:pointer">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;margin-bottom:8px;color:var(--c-error)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'+
+        '<div style="font-size:14px;font-weight:600">敏感词检测</div>'+
+        '<div style="font-size:12px;color:var(--c-text-secondary)">广告法违禁词检查</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="card">'+
+      '<div class="card-header"><h2>快速开始</h2></div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+        '<button class="btn btn-primary" onclick="navigateTo(\'title-analyzer\')" style="justify-content:center;padding:16px">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>'+
+          '分析标题'+
+        '</button>'+
+        '<button class="btn btn-primary" onclick="navigateTo(\'copy-diagnosis\')" style="justify-content:center;padding:16px;background:var(--c-success);border-color:var(--c-success)">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'+
+          '诊断文案'+
+        '</button>'+
+      '</div>'+
+    '</div>'+
+    (hasData?'<div class="card"><div class="card-header"><h2>最近分析</h2></div>'+
+      (analysisResults.titleAnalysis?'<div class="detail-row"><span class="key">标题分析</span><span class="value">'+analysisResults.titleAnalysis.title+' — '+analysisResults.titleAnalysis.score+'分</span></div>':'')+
+      (analysisResults.diagnosis?'<div class="detail-row"><span class="key">文案诊断</span><span class="value">'+analysisResults.diagnosis.chars+'字 · '+analysisResults.diagnosis.sents+'句 · '+analysisResults.diagnosis.score+'分</span></div>':'')+
+    '</div>':'<div class="card"><div class="empty-state"><p style="margin-bottom:8px">还没有分析记录</p><p style="font-size:13px;color:var(--c-text-tertiary)">点击上方工具按钮开始使用</p></div></div>');
+}
+
+// ========== Page: Title Analyzer ==========
+function renderTitleAnalyzer(el){
+  el.innerHTML='<div class="page-header"><h2>智能标题分析</h2><p>输入标题，获取评分、优化建议和多平台适配分析</p></div>'+
+    '<div class="card">'+
+      '<div class="form-group">'+
+        '<label for="titleInput">输入标题</label>'+
+        '<div class="input-group">'+
+          '<input type="text" class="input" id="titleInput" placeholder="输入你需要分析的标题..." value="'+(analysisResults.titleAnalysis?analysisResults.titleAnalysis.title:'')+'" maxlength="80">'+
+          '<button class="btn btn-primary" onclick="runTitleAnalysis()">分析</button>'+
+        '</div>'+
+      '</div>'+
+      '<div id="titleResult"></div>'+
+    '</div>';
+  document.getElementById('titleInput')?.addEventListener('keydown',function(e){if(e.key==='Enter')runTitleAnalysis();});
+  if(analysisResults.titleAnalysis) runTitleAnalysis();
+}
+
+function runTitleAnalysis(){
+  var input = document.getElementById('titleInput');
+  if(!input) return;
+  var title = input.value.trim();
+  if(!title){return;}
+  var result = analyzeTitle(title);
+  analysisResults.titleAnalysis = {title:title,score:result.score,level:result.level,suggestions:result.suggestions,
+    len:result.len,chars:result.chars,hasNumbers:result.hasNumbers,hasQuestion:result.hasQuestion,
+    hasExclamation:result.hasExclamation,hasQuotes:result.hasQuotes,hasEmoji:result.hasEmoji,foundPower:result.foundPower};
+  var resultEl = document.getElementById('titleResult');
+  var levelMap = {excellent:'优秀',good:'良好',average:'一般',poor:'待优化'};
+  var sugHtml = result.suggestions.map(function(s){
+    return '<div class="suggestion '+s.type+'">'+icon(s.type==='positive'?'check':'alert')+'<div class="text">'+s.msg+'</div></div>';
+  }).join('');
+  var platforms = getPlatformAdvice(title);
+  var platHtml = platforms.map(function(p){
+    return '<div class="detail-row"><span class="key"><span class="platform-badge '+p.class+'">'+p.name+'</span> 建议'+p.ideal+'</span><span class="value" style="color:'+(p.ok?'var(--c-success)':'var(--c-warning)')+'">'+(p.ok?'✓ 合适':p.advice)+'</span></div>';
+  }).join('');
+  resultEl.innerHTML='<div class="result-area">'+
+    '<div style="display:flex;align-items:center;gap:24px;margin-bottom:16px">'+
+      '<div class="score-ring"><div class="ring '+result.level+'">'+result.score+'</div><div style="font-size:13px;font-weight:500;color:var(--c-text-secondary)">'+levelMap[result.level]+'</div></div>'+
+      '<div style="flex:1"><div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0">'+
+        '<div class="stat-card" style="padding:12px"><div class="value" style="font-size:20px">'+result.len+'</div><div class="label">总字数</div></div>'+
+        '<div class="stat-card" style="padding:12px"><div class="value" style="font-size:20px">'+result.chars+'</div><div class="label">中文字数</div></div>'+
+        '<div class="stat-card" style="padding:12px"><div class="value primary" style="font-size:20px">'+(result.foundPower.length||'0')+'</div><div class="label">效果词</div></div>'+
+      '</div></div>'+
+    '</div>'+
+    (sugHtml?'<div class="card" style="margin-top:12px"><div class="card-header"><h3>优化建议</h3></div>'+sugHtml+'</div>':'')+
+    '<div class="card"><div class="card-header"><h3>平台适配</h3></div>'+platHtml+'</div>'+
+  '</div>';
+}
+
+// ========== Page: Copy Diagnosis ==========
+function renderCopyDiagnosis(el){
+  el.innerHTML='<div class="page-header"><h2>文案诊断</h2><p>分析文案的可读性、关键词密度和结构</p></div>'+
+    '<div class="card">'+
+      '<div class="form-group"><label for="diagInput">输入文案</label>'+
+        '<textarea class="input large" id="diagInput" placeholder="粘贴你的文案内容...">'+(analysisResults.diagnosis?analysisResults.diagnosis.rawText:'')+'</textarea></div>'+
+      '<div class="form-group"><label for="diagKeywords">关键词（可选，逗号分隔）</label>'+
+        '<input type="text" class="input" id="diagKeywords" placeholder="例如：护肤品,保湿,抗皱" value="'+(analysisResults.diagnosis?analysisResults.diagnosis.keywordsStr:'')+'"></div>'+
+      '<button class="btn btn-primary" onclick="runDiagnosis()">开始诊断</button>'+
+      '<div id="diagResult"></div>'+
+    '</div>';
+  if(analysisResults.diagnosis) runDiagnosis();
+}
+
+function runDiagnosis(){
+  var textInput = document.getElementById('diagInput');
+  var kwInput = document.getElementById('diagKeywords');
+  if(!textInput||!kwInput) return;
+  var text = textInput.value.trim();
+  if(!text) return;
+  var kwStr = kwInput.value.trim();
+  var keywords = kwStr?kwStr.split(/[,，、\s]+/).filter(function(k){return k.trim()}):[];
+  var readability = analyzeReadability(text);
+  var wordCount = countWords(text);
+  var keywordDensity = getKeywordDensity(text,keywords);
+  var longSentPct = readability.sents>0?Math.round((readability.longSents/readability.sents)*100):0;
+  analysisResults.diagnosis = {rawText:text,keywordsStr:kwStr,chars:readability.chars,sents:readability.sents,
+    paras:readability.paras,avgSentLen:readability.avgSentLen,longSents:readability.longSents,
+    shortSents:readability.shortSents,score:readability.score,wordCount:wordCount,
+    keywordDensity:keywordDensity,longSentPct:longSentPct};
+  var resultEl = document.getElementById('diagResult');
+  var levelMap = {excellent:'优秀',good:'良好',average:'一般',poor:'待优化'};
+  var level = 'poor';
+  if(readability.score>=80) level='excellent';
+  else if(readability.score>=65) level='good';
+  else if(readability.score>=50) level='average';
+  var kwHtml = keywordDensity.length?'<div class="card" style="margin-top:12px"><div class="card-header"><h3>关键词密度</h3></div>'+
+    '<div class="keyword-tags">'+keywordDensity.map(function(k){
+      return '<span class="keyword-tag">'+k.keyword+'<span class="count">'+k.count+'次 '+k.density+'%</span></span>';
+    }).join('')+'</div></div>':'';
+  resultEl.innerHTML='<div class="result-area">'+
+    '<div style="display:flex;align-items:center;gap:24px;margin-bottom:16px">'+
+      '<div class="score-ring"><div class="ring '+level+'">'+readability.score+'</div><div style="font-size:13px;font-weight:500;color:var(--c-text-secondary)">'+levelMap[level]+'</div><div style="font-size:11px;color:var(--c-text-tertiary)">可读性评分</div></div>'+
+      '<div style="flex:1"><div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:0">'+
+        '<div class="stat-card" style="padding:12px"><div class="value primary" style="font-size:20px">'+readability.chars+'</div><div class="label">中文字数</div></div>'+
+        '<div class="stat-card" style="padding:12px"><div class="value" style="font-size:20px">'+wordCount.englishWords+'</div><div class="label">英文词数</div></div>'+
+        '<div class="stat-card" style="padding:12px"><div class="value" style="font-size:20px">'+wordCount.totalChars+'</div><div class="label">总字符数</div></div>'+
+      '</div></div>'+
+    '</div>'+
+    '<div class="card"><div class="card-header"><h3>结构分析</h3></div><div class="stat-grid" style="grid-template-columns:repeat(2,1fr)">'+
+      '<div class="stat-card" style="padding:12px"><div class="value" style="font-size:18px">'+readability.sents+'</div><div class="label">句子数</div></div>'+
+      '<div class="stat-card" style="padding:12px"><div class="value" style="font-size:18px">'+readability.paras+'</div><div class="label">段落数</div></div>'+
+      '<div class="stat-card" style="padding:12px"><div class="value '+(readability.avgSentLen>=15&&readability.avgSentLen<=30?'success':readability.avgSentLen>40?'error':'warning')+'" style="font-size:18px">'+readability.avgSentLen+'</div><div class="label">平均句长（字）</div></div>'+
+      '<div class="stat-card" style="padding:12px"><div class="value '+(longSentPct>30?'error':'success')+'" style="font-size:18px">'+readability.longSents+'</div><div class="label">长句（>50字）</div></div>'+
+    '</div></div>'+
+    kwHtml+
+    '<div class="card"><div class="card-header"><h3>诊断建议</h3></div>'+
+    (readability.score<50?'<div class="suggestion error">'+icon('alert')+'<div class="text"><strong>可读性较低</strong>建议缩短句子长度，增加段落和标点符号，使内容更易读</div></div>':'')+
+    (readability.score>=50&&readability.score<65?'<div class="suggestion warning">'+icon('alert')+'<div class="text"><strong>可读性一般</strong>部分句子偏长，建议适当拆分</div></div>':'')+
+    (readability.score>=65&&readability.score<80?'<div class="suggestion warning">'+icon('info')+'<div class="text"><strong>可读性良好</strong>结构清晰，可以进一步优化关键词分布</div></div>':'')+
+    (readability.score>=80?'<div class="suggestion positive">'+icon('check')+'<div class="text"><strong>可读性优秀</strong>文案结构合理，阅读体验好</div></div>':'')+
+    (longSentPct>30?'<div class="suggestion warning">'+icon('alert')+'<div class="text"><strong>长句偏多</strong>超过30%的句子过长，建议将长句拆分为2-3个短句</div></div>':'')+
+    (readability.paras<3&&readability.chars>100?'<div class="suggestion warning">'+icon('alert')+'<div class="text"><strong>段落太少</strong>建议将内容分成3个以上段落，提升阅读体验</div></div>':'<div class="suggestion positive">'+icon('check')+'<div class="text">段落结构合理</div></div>')+
+    (keywords.length&&!keywordDensity.some(function(k){return parseFloat(k.density)>0.5})?'<div class="suggestion warning">'+icon('alert')+'<div class="text"><strong>关键词密度偏低</strong>建议在文案中自然地增加目标关键词的出现频率</div></div>':'')+
+    (keywords.length&&keywordDensity.some(function(k){return parseFloat(k.density)>5})?'<div class="suggestion error">'+icon('alert')+'<div class="text"><strong>关键词堆砌风险</strong>部分关键词密度超过5%，可能被搜索引擎判定为关键词堆砌</div></div>':'')+
+  '</div></div>';
+}
+
+// ========== Page: Word Counter ==========
+function renderWordCounter(el){
+  el.innerHTML='<div class="page-header"><h2>字数统计</h2><p>多维度文本统计分析</p></div>'+
+    '<div class="card">'+
+      '<div class="form-group"><label for="wcInput">输入文本</label>'+
+        '<textarea class="input large" id="wcInput" placeholder="输入或粘贴需要统计的文本..." oninput="updateWordCount()"></textarea></div>'+
+      '<div id="wcResult"><div class="empty-state"><p style="font-size:13px;color:var(--c-text-tertiary)">输入文本后自动统计</p></div></div>'+
+    '</div>';
+}
+
+function updateWordCount(){
+  var textInput = document.getElementById('wcInput');
+  if(!textInput) return;
+  var text = textInput.value;
+  var resultEl = document.getElementById('wcResult');
+  if(!text.trim()){
+    resultEl.innerHTML='<div class="empty-state"><p style="font-size:13px;color:var(--c-text-tertiary)">输入文本后自动统计</p></div>';
+    return;
+  }
+  var wc = countWords(text);
+  var sents = countSentences(text);
+  var paras = countParagraphs(text);
+  var chars = countChineseChars(text);
+  var spaces = (text.match(/\\s/g)||[]).length;
+  var punctuation = (text.match(/[，。！？、；：""''（）【】《》—…·,.!?;:\'\"()\[\]{}]/g)||[]).length;
+  var digits = (text.match(/\\d/g)||[]).length;
+  var letters = (text.match(/[a-zA-Z]/g)||[]).length;
+  resultEl.innerHTML='<div class="result-area">'+
+    '<div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">'+
+      '<div class="stat-card" style="padding:12px"><div class="value primary" style="font-size:22px">'+wc.totalChars+'</div><div class="label">总字符（无空格）</div></div>'+
+      '<div class="stat-card" style="padding:12px"><div class="value" style="font-size:22px">'+text.length+'</div><div class="label">总字符（含空格）</div></div>'+
+      '<div class="stat-card" style="padding:12px"><div class="value success" style="font-size:22px">'+chars+'</div><div class="label">中文字数</div></div>'+
+      '<div class="stat-card" style="padding:12px"><div class="value warning" style="font-size:22px">'+wc.englishWords+'</div><div class="label">英文词数</div></div>'+
+    '</div>'+
+    '<div class="card"><div class="card-header"><h3>详细统计</h3></div><div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">'+
+      '<div class="stat-card" style="padding:10px"><div class="label">句子数</div><div class="value" style="font-size:18px">'+sents+'</div></div>'+
+      '<div class="stat-card" style="padding:10px"><div class="label">段落数</div><div class="value" style="font-size:18px">'+paras+'</div></div>'+
+      '<div class="stat-card" style="padding:10px"><div class="label">空格数</div><div class="value" style="font-size:18px">'+spaces+'</div></div>'+
+      '<div class="stat-card" style="padding:10px"><div class="label">标点符号</div><div class="value" style="font-size:18px">'+punctuation+'</div></div>'+
+      '<div class="stat-card" style="padding:10px"><div class="label">数字</div><div class="value" style="font-size:18px">'+digits+'</div></div>'+
+      '<div class="stat-card" style="padding:10px"><div class="label">英文字母</div><div class="value" style="font-size:18px">'+letters+'</div></div>'+
+    '</div></div></div>';
+}
+
+// ========== Page: Sensitive Words ==========
+function renderSensitiveWords(el){
+  el.innerHTML='<div class="page-header"><h2>敏感词检测</h2><p>检测文案中是否包含广告法违禁词和夸大宣传用语</p></div>'+
+    '<div class="card">'+
+      '<div class="form-group"><label for="swInput">输入文案</label>'+
+        '<textarea class="input large" id="swInput" placeholder="粘贴需要检测的文案..."></textarea></div>'+
+      '<button class="btn btn-primary" onclick="runSensitiveCheck()">开始检测</button>'+
+      '<div id="swResult"></div>'+
+    '</div>';
+}
+
+function runSensitiveCheck(){
+  var input = document.getElementById('swInput');
+  if(!input) return;
+  var text = input.value.trim();
+  if(!text) return;
+  var results = checkSensitiveWords(text);
+  var resultEl = document.getElementById('swResult');
+  if(results.length===0){
+    resultEl.innerHTML='<div class="result-area"><div class="suggestion positive">'+icon('check')+'<div class="text"><strong>检测通过</strong>未发现常见敏感词，文案合规性良好</div></div></div>';
+    return;
+  }
+  var grouped = {};
+  results.forEach(function(r){
+    if(!grouped[r.word]) grouped[r.word]=[];
+    grouped[r.word].push(r);
+  });
+  var entries = Object.entries(grouped);
+  resultEl.innerHTML='<div class="result-area">'+
+    '<div class="suggestion error">'+icon('alert')+'<div class="text"><strong>发现 '+results.length+' 个敏感词</strong>（共 '+entries.length+' 种），建议替换后重新审核</div></div>'+
+    '<div class="progress-bar" style="margin-bottom:16px"><div class="fill poor" style="width:100%"></div></div>'+
+    entries.map(function(e){
+      var word = e[0], matches = e[1];
+      return '<div class="card" style="margin-bottom:8px;padding:14px">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+
+          '<span style="background:var(--c-error);color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">'+word+'</span>'+
+          '<span style="font-size:12px;color:var(--c-text-secondary)">出现 '+matches.length+' 次</span></div>'+
+        matches.map(function(m,i){
+          return '<div class="detail-row" style="font-size:12px"><span class="key">#'+(i+1)+'</span><span class="value" style="font-weight:400;font-family:monospace;background:var(--c-error-bg);padding:2px 6px;border-radius:3px">...'+m.context+'...</span></div>';
+        }).join('')+
+      '</div>';
+    }).join('')+
+  '</div>';
+}
+
+// ========== Page: Templates ==========
+var selectedTemplate = null;
+function renderTemplates(el){
+  el.innerHTML='<div class="page-header"><h2>文案模板</h2><p>各平台营销文案模板，点击查看详情</p></div>'+
+    '<div class="toolbar" id="templateToolbar">'+
+      '<div class="btn-group" id="templateFilter">'+
+        '<button class="btn btn-sm active" data-cat="all" onclick="filterTemplates(\'all\')">全部</button>'+
+        '<button class="btn btn-sm" data-cat="电商标题" onclick="filterTemplates(\'电商标题\')">电商标题</button>'+
+        '<button class="btn btn-sm" data-cat="小红书笔记" onclick="filterTemplates(\'小红书笔记\')">小红书</button>'+
+        '<button class="btn btn-sm" data-cat="公众号文章" onclick="filterTemplates(\'公众号文章\')">公众号</button>'+
+        '<button class="btn btn-sm" data-cat="抖音短视频" onclick="filterTemplates(\'抖音短视频\')">抖音</button>'+
+        '<button class="btn btn-sm" data-cat="知乎回答" onclick="filterTemplates(\'知乎回答\')">知乎</button>'+
+        '<button class="btn btn-sm" data-cat="营销文案" onclick="filterTemplates(\'营销文案\')">营销</button>'+
+        '<button class="btn btn-sm" data-cat="品牌文案" onclick="filterTemplates(\'品牌文案\')">品牌</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="template-grid" id="templateGrid"></div>';
+  renderTemplateGrid('all');
+}
+
+function filterTemplates(cat){
+  document.querySelectorAll('#templateFilter .btn').forEach(function(b){b.classList.toggle('active',b.dataset.cat===cat);});
+  renderTemplateGrid(cat);
+}
+
+function renderTemplateGrid(cat){
+  var grid = document.getElementById('templateGrid');
+  var filtered = cat==='all'?templateDB:templateDB.filter(function(t){return t.category===cat;});
+  if(filtered.length===0){
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><p>该分类暂无模板</p></div>';
+    return;
+  }
+  grid.innerHTML=filtered.map(function(t){
+    return '<div class="template-card fade-in" onclick="showTemplateDetail('+t.id+')">'+
+      '<div class="category">'+t.category+'</div>'+
+      '<h4>'+t.title+'</h4>'+
+      '<p>'+t.preview.substring(0,60)+(t.preview.length>60?'...':'')+'</p>'+
+      '<div class="tags">'+t.tags.map(function(tag){return '<span>'+tag+'</span>';}).join('')+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function showTemplateDetail(id){
+  var t = templateDB.find(function(t){return t.id===id;});
+  if(!t) return;
+  var overlay = document.createElement('div');
+  overlay.className = 'template-detail-overlay fade-in';
+  overlay.id='templateDetailOverlay';
+  overlay.onclick = function(e){if(e.target===overlay) closeTemplateDetail();};
+  overlay.innerHTML='<div class="template-detail-modal">'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+
+      '<span style="font-size:11px;color:var(--c-text-tertiary);font-weight:500">'+t.category+'</span>'+
+      '<span style="font-size:11px;color:var(--c-text-secondary)">·</span>'+
+      t.tags.map(function(tag){return '<span style="font-size:11px;background:var(--c-bg);padding:2px 6px;border-radius:4px;color:var(--c-text-secondary)">'+tag+'</span>';}).join('')+
+    '</div>'+
+    '<h3>'+t.title+'</h3>'+
+    '<div class="preview">'+t.preview+'</div>'+
+    '<div class="actions">'+
+      '<button class="btn btn-secondary" onclick="closeTemplateDetail()">关闭</button>'+
+      '<button class="btn btn-primary" onclick="copyTemplateText('+t.id+')">'+icon('copy')+' 复制文案</button>'+
+    '</div></div>';
+  document.body.appendChild(overlay);
+  selectedTemplate = t;
+}
+
+function closeTemplateDetail(){
+  var el = document.getElementById('templateDetailOverlay');
+  if(el) el.remove();
+  selectedTemplate = null;
+}
+
+function copyTemplateText(id){
+  var t = templateDB.find(function(t){return t.id===id;});
+  if(!t) return;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t.preview).then(function(){
+      closeTemplateDetail();
+      showToast('已复制到剪贴板');
+    }).catch(function(){fallbackCopy(t.preview);});
+  } else {
+    fallbackCopy(t.preview);
+  }
+}
+
+function fallbackCopy(text){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position='fixed';ta.style.left='-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  closeTemplateDetail();
+  showToast('已复制到剪贴板');
+}
+
+// ========== Toast ==========
+function showToast(msg){
+  var existing = document.querySelector('.toast');
+  if(existing) existing.remove();
+  var toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;z-index:200;box-shadow:0 4px 12px rgba(0,0,0,.2);animation:fadeIn .3s ease';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function(){toast.style.opacity='0';toast.style.transition='opacity .3s';setTimeout(function(){toast.remove();},300);},2000);
+}
+
+// ========== Export ==========
+function handleExport(){
+  var text = '=== 内容工坊 分析报告 ===\\n\\n';
+  if(analysisResults.titleAnalysis){
+    var r = analysisResults.titleAnalysis;
+    text += '【标题分析】\\n标题：'+r.title+'\\n评分：'+r.score+'/100\\n';
+    r.suggestions.forEach(function(s){text += '- '+s.msg+'\\n';});
+    text += '\\n';
+  }
+  if(analysisResults.diagnosis){
+    var r = analysisResults.diagnosis;
+    text += '【文案诊断】\\n字数：'+r.chars+'\\n句子数：'+r.sents+'\\n段落数：'+r.paras+'\\n可读性评分：'+r.score+'/100\\n';
+    text += '平均句长：'+r.avgSentLen+'字\\n长句数：'+r.longSents+'\\n';
+    if(r.keywordDensity&&r.keywordDensity.length){
+      text += '关键词密度：\\n';
+      r.keywordDensity.forEach(function(k){text += '  '+k.keyword+': '+k.count+'次 ('+k.density+'%)\\n';});
+    }
+    text += '\\n';
+  }
+  if(text==='=== 内容工坊 分析报告 ===\\n\\n'){
+    showToast('暂无分析数据，请先使用工具');
+    return;
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){showToast('报告已复制到剪贴板');}).catch(function(){fallbackCopy(text);});
+  } else fallbackCopy(text);
+}
+
+// ========== Init ==========
+renderPage('dashboard');
+</script>
+</body>
+</html>
